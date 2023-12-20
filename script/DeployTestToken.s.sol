@@ -6,7 +6,7 @@ import {Script} from "../lib/forge-std/src/Script.sol";
 import {TestToken} from "../src/TestToken.sol";
 
 
-contract DeployToken is Script{
+contract DeployTestToken is Script{
 
         uint256 public constant INITIAL_SUPPLY = 1000 ether;
 
