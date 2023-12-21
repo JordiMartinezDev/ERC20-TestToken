@@ -26,9 +26,7 @@ contract TestTokenTest{
 
     }
 
-    function testBobBalance(){
-        assertEq();
-    }
+    
 
 
 }
