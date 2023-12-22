@@ -6,15 +6,15 @@ import {Test} from "../lib/forge-std/src/Test.sol";
 import {TestToken} from "../src/TestToken.sol";
 import {DeployTestToken} from "../script/DeployTestToken.s.sol";
 
-contract TestTokenTest{
+contract TestTokenTest is Test{
 
     TestToken public testToken;
     DeployTestToken public deployer;
 
     uint public constant STARTING_BALANCE = 1 ether;
 
-    address bob = makeAddr("Bob");
-    address alice = makeAddr("Alice");
+    address bob = makeAddr("bob");
+    address alice = makeAddr("alice");
 
     function setUp() public{
         deployer = new DeployTestToken();
@@ -22,8 +22,11 @@ contract TestTokenTest{
 
         vm.prank(msg.sender);
 
-        testToken.transfer(STARTING_BALANNCE, testToken.balanceOf(bob));
+        testToken.transfer(bob, STARTING_BALANCE);
+    }
 
+    function testBobBalance() public{
+        assertEq(STARTING_BALANCE, testToken.balanceOf(bob));
     }
 
     

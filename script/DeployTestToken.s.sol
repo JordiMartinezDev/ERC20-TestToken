@@ -14,10 +14,10 @@ contract DeployTestToken is Script{
 
 
         vm.startBroadcast();
-
+        
         TestToken tt = new TestToken(INITIAL_SUPPLY);
-        return tt;
         vm.stopBroadcast();
+        return tt;
 
     }
 
