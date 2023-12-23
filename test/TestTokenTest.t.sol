@@ -31,7 +31,17 @@ contract TestTokenTest is Test{
 
     function testAllowances() public {
 
-        
+        uint intAllowance = 1000;
+        vm.prank(bob);
+
+        testToken.approve(alice, intAllowance);
+
+        uint transferAmount = 1;
+
+        vm.prank(alice);
+        testToken.transferFrom(bob, alice, 1);
+
+        testToken.transfer(alice,transferAmount);
     }
 
 
