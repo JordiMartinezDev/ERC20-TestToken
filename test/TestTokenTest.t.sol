@@ -25,11 +25,14 @@ contract TestTokenTest is Test{
         testToken.transfer(bob, STARTING_BALANCE);
     }
 
-    function testBobBalance() public{
+    function testBobBalance() public {
         assertEq(STARTING_BALANCE, testToken.balanceOf(bob));
     }
 
-    
+    function testAllowances() public {
+
+        
+    }
 
 
 }
