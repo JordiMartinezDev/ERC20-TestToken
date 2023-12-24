@@ -44,5 +44,8 @@ contract TestTokenTest is Test{
         testToken.transfer(alice,transferAmount);
     }
 
+    function testInitialSupply() public {
+        assertEq(deployer.INITIAL_SUPPLY(), testToken.totalSupply(), "Initial supply should match");
+    }
 
 }
