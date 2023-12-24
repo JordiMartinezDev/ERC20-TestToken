@@ -84,4 +84,8 @@ contract TestTokenTest is Test{
     function testDecimals() public {
         assertEq(18, testToken.decimals(), "Decimals should be 18");
     }
+    function testNameAndSymbol() public {
+        assertEq("TestToken", testToken.name(), "Token name should match");
+        assertEq("TT", testToken.symbol(), "Token symbol should match");
+    }
 }
