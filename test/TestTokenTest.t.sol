@@ -48,4 +48,10 @@ contract TestTokenTest is Test{
         assertEq(deployer.INITIAL_SUPPLY(), testToken.totalSupply(), "Initial supply should match");
     }
 
+     function testTransfer() public {
+        uint transferAmount = 10;
+        testToken.transfer(alice, transferAmount);
+        assertEq(STARTING_BALANCE - transferAmount, testToken.balanceOf(bob), "Bob's balance should decrease");
+        assertEq(transferAmount, testToken.balanceOf(alice), "Alice's balance should increase");
+    }
 }
