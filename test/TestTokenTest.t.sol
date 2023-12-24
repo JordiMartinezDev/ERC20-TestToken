@@ -11,7 +11,7 @@ contract TestTokenTest is Test{
     TestToken public testToken;
     DeployTestToken public deployer;
 
-    uint public constant STARTING_BALANCE = 1 ether;
+    uint public constant STARTING_BALANCE = 100 ether;
 
     address bob = makeAddr("bob");
     address alice = makeAddr("alice");
@@ -53,5 +53,31 @@ contract TestTokenTest is Test{
         testToken.transfer(alice, transferAmount);
         assertEq(STARTING_BALANCE - transferAmount, testToken.balanceOf(bob), "Bob's balance should decrease");
         assertEq(transferAmount, testToken.balanceOf(alice), "Alice's balance should increase");
+    }
+
+    function testTransferFrom() public {
+        uint allowance = 50;
+        testToken.approve(alice, allowance);
+        uint transferAmount = 1;
+
+        testToken.transferFrom(bob, alice, transferAmount);
+
+        assertEq(STARTING_BALANCE - transferAmount, testToken.balanceOf(bob), "Bob's balance should decrease");
+        assertEq(transferAmount, testToken.balanceOf(alice), "Alice's balance should increase");
+        assertEq(allowance - transferAmount, testToken.allowance(bob, alice), "Allowance should decrease");
+    }
+
+    function testFailedTransferFrom() public {
+        // Attempt to transfer more than the allowed allowance
+        uint allowance = 30;
+        testToken.approve(alice, allowance);
+        uint transferAmount = 40;
+
+        bool success = testToken.transferFrom(bob, alice, transferAmount);
+        assert(!success, "TransferFrom should fail");
+
+        assertEq(STARTING_BALANCE, testToken.balanceOf(bob), "Bob's balance should not change");
+        assertEq(0, testToken.balanceOf(alice), "Alice's balance should not change");
+        assertEq(allowance, testToken.allowance(bob, alice), "Allowance should not change");
     }
 }
