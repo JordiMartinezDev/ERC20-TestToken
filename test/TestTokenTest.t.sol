@@ -80,4 +80,8 @@ contract TestTokenTest is Test{
         assertEq(0, testToken.balanceOf(alice), "Alice's balance should not change");
         assertEq(allowance, testToken.allowance(bob, alice), "Allowance should not change");
     }
+
+    function testDecimals() public {
+        assertEq(18, testToken.decimals(), "Decimals should be 18");
+    }
 }
