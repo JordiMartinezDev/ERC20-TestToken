@@ -120,7 +120,7 @@ contract TestTokenTest is Test {
     }
     function testTotalSupply() public {
     // Test the total supply of the token
-    assertEq(testToken.totalSupply(), STARTING_BALANCE, "Incorrect total supply");
+    assertEq(testToken.totalSupply(), 1000 ether, "Incorrect total supply");
     }
     function testReentrancyAttack() public {
         // Reentrancy attack test
