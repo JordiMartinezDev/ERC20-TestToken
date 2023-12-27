@@ -109,6 +109,12 @@ contract TestTokenTest is Test {
     assertEq(testToken.decimals(), 18, "Incorrect number of decimals");
     }
 
+    function testSymbol() public {
+    // Test the token symbol
+    assertEq(testToken.symbol(), "TT", "Incorrect token symbol");
+    }
+    
+
     function testReentrancyAttack() public {
         // Reentrancy attack test
         MaliciousContract attacker = new MaliciousContract(address(testToken));
