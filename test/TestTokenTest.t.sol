@@ -114,6 +114,10 @@ contract TestTokenTest is Test {
     assertEq(testToken.symbol(), "TT", "Incorrect token symbol");
     }
     
+    function testName() public {
+    // Test the token name
+    assertEq(testToken.name(), "TestToken", "Incorrect token name");
+}
 
     function testReentrancyAttack() public {
         // Reentrancy attack test
