@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.18;
 
@@ -6,7 +6,20 @@ import {Test} from "../lib/forge-std/src/Test.sol";
 import {TestToken} from "../src/TestToken.sol";
 import {DeployTestToken} from "../script/DeployTestToken.s.sol";
 
-contract TestTokenTest is Test{
+// Malicious contract for reentrancy attack simulation
+contract MaliciousContract {
+    TestToken public token;
+
+    constructor(address _token) {
+        token = TestToken(_token);
+    }
+
+    function attack() external {
+        token.transferFrom(msg.sender, address(this), token.balanceOf(msg.sender));
+    }
+}
+
+contract TestTokenTest is Test {
 
     TestToken public testToken;
     DeployTestToken public deployer;
@@ -16,7 +29,7 @@ contract TestTokenTest is Test{
     address bob = makeAddr("bob");
     address alice = makeAddr("alice");
 
-    function setUp() public{
+    function setUp() public {
         deployer = new DeployTestToken();
         testToken = deployer.run();
 
@@ -30,12 +43,11 @@ contract TestTokenTest is Test{
     }
 
     function testAllowances() public {
-
         uint intAllowance = 1000;
         vm.prank(bob);
 
+        // Test approval and transferFrom
         testToken.approve(alice, intAllowance);
-
         uint transferAmount = 1;
 
         vm.prank(alice);
@@ -44,7 +56,41 @@ contract TestTokenTest is Test{
         assertEq(testToken.balanceOf(alice), transferAmount);
         assertEq(testToken.balanceOf(bob), STARTING_BALANCE - transferAmount);
 
+        // Test decreasing allowance
+        uint newAllowance = intAllowance - transferAmount;
+        assertEq(testToken.allowance(bob, alice), newAllowance, "Allowance not decreased properly");
+
+        // Test multiple transfers with allowances
+        uint transferAmount2 = 2;
+        vm.prank(alice);
+        testToken.transferFrom(bob, alice, transferAmount2);
+
+        assertEq(testToken.balanceOf(alice), transferAmount + transferAmount2, "Incorrect balance after multiple transfers");
+        assertEq(testToken.balanceOf(bob), STARTING_BALANCE - transferAmount - transferAmount2, "Incorrect balance for sender");
+        assertEq(testToken.allowance(bob, alice), newAllowance - transferAmount2, "Allowance not decreased properly after multiple transfers");
     }
 
-    
+    function testTransfer() public {
+        // Test basic transfer
+        uint transferAmount = 10;
+        vm.prank(bob);
+        testToken.transfer(alice, transferAmount);
+
+        assertEq(testToken.balanceOf(alice), transferAmount, "Incorrect balance after transfer");
+        assertEq(testToken.balanceOf(bob), STARTING_BALANCE - transferAmount, "Incorrect balance for sender");
+    }
+
+
+    function testReentrancyAttack() public {
+        // Reentrancy attack test
+        MaliciousContract attacker = new MaliciousContract(address(testToken));
+        testToken.approve(address(attacker), STARTING_BALANCE);
+
+        // Trigger reentrancy attack
+        vm.prank(address(attacker));
+        attacker.attack();
+
+        // Ensure the attack did not compromise the token balance
+        assertEq(testToken.balanceOf(bob), STARTING_BALANCE, "Reentrancy attack compromised token balance");
+    }
 }
