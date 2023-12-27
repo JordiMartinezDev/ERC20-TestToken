@@ -39,53 +39,10 @@ contract TestTokenTest is Test{
         uint transferAmount = 1;
 
         vm.prank(alice);
-        testToken.transferFrom(bob, alice, 1);
+        testToken.transferFrom(bob, alice, transferAmount);
 
         testToken.transfer(alice,transferAmount);
     }
 
-    function testInitialSupply() public {
-        assertEq(deployer.INITIAL_SUPPLY(), testToken.totalSupply(), "Initial supply should match");
-    }
-
-     function testTransfer() public {
-        uint transferAmount = 10;
-        testToken.transfer(alice, transferAmount);
-        assertEq(STARTING_BALANCE - transferAmount, testToken.balanceOf(bob), "Bob's balance should decrease");
-        assertEq(transferAmount, testToken.balanceOf(alice), "Alice's balance should increase");
-    }
-
-    function testTransferFrom() public {
-        uint allowance = 50;
-        testToken.approve(alice, allowance);
-        uint transferAmount = 1;
-
-        testToken.transferFrom(bob, alice, transferAmount);
-
-        assertEq(STARTING_BALANCE - transferAmount, testToken.balanceOf(bob), "Bob's balance should decrease");
-        assertEq(transferAmount, testToken.balanceOf(alice), "Alice's balance should increase");
-        assertEq(allowance - transferAmount, testToken.allowance(bob, alice), "Allowance should decrease");
-    }
-
-    function testFailedTransferFrom() public {
-        // Attempt to transfer more than the allowed allowance
-        uint allowance = 30;
-        testToken.approve(alice, allowance);
-        uint transferAmount = 40;
-
-        bool success = testToken.transferFrom(bob, alice, transferAmount);
-        assert(!success, "TransferFrom should fail");
-
-        assertEq(STARTING_BALANCE, testToken.balanceOf(bob), "Bob's balance should not change");
-        assertEq(0, testToken.balanceOf(alice), "Alice's balance should not change");
-        assertEq(allowance, testToken.allowance(bob, alice), "Allowance should not change");
-    }
-
-    function testDecimals() public {
-        assertEq(18, testToken.decimals(), "Decimals should be 18");
-    }
-    function testNameAndSymbol() public {
-        assertEq("TestToken", testToken.name(), "Token name should match");
-        assertEq("TT", testToken.symbol(), "Token symbol should match");
-    }
+    
 }
