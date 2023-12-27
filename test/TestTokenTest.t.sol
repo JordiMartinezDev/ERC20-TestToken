@@ -117,8 +117,11 @@ contract TestTokenTest is Test {
     function testName() public {
     // Test the token name
     assertEq(testToken.name(), "TestToken", "Incorrect token name");
-}
-
+    }
+    function testTotalSupply() public {
+    // Test the total supply of the token
+    assertEq(testToken.totalSupply(), STARTING_BALANCE, "Incorrect total supply");
+    }
     function testReentrancyAttack() public {
         // Reentrancy attack test
         MaliciousContract attacker = new MaliciousContract(address(testToken));
