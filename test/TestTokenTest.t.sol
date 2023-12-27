@@ -28,6 +28,7 @@ contract TestTokenTest is Test {
 
     address bob = makeAddr("bob");
     address alice = makeAddr("alice");
+    address charlie = makeAddr("charlie");
 
     function setUp() public {
         deployer = new DeployTestToken();
@@ -80,6 +81,33 @@ contract TestTokenTest is Test {
         assertEq(testToken.balanceOf(bob), STARTING_BALANCE - transferAmount, "Incorrect balance for sender");
     }
 
+    function testTransfer2() public {
+        
+        // Test basic transfer
+        uint transferAmount = 10;
+        vm.prank(bob);
+        testToken.transfer(alice, transferAmount);
+
+        assertEq(testToken.balanceOf(alice), transferAmount, "Incorrect balance after transfer");
+        assertEq(testToken.balanceOf(bob), STARTING_BALANCE - transferAmount, "Incorrect balance for sender");
+
+        // Test transferring to self
+        vm.prank(bob);
+        testToken.transfer(bob, transferAmount);
+        assertEq(testToken.balanceOf(bob), STARTING_BALANCE - transferAmount, "Balance should not change when transferring to self");
+
+        // Test transferring to another account
+        uint transferAmount2 = 5;
+        vm.prank(alice);
+        testToken.transfer(charlie, transferAmount2);
+        assertEq(testToken.balanceOf(charlie), transferAmount2, "Incorrect balance for receiver");
+    
+    }
+
+    function testDecimals() public {
+    // Test the number of decimals in the token
+    assertEq(testToken.decimals(), 18, "Incorrect number of decimals");
+    }
 
     function testReentrancyAttack() public {
         // Reentrancy attack test
