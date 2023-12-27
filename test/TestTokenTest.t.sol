@@ -41,7 +41,9 @@ contract TestTokenTest is Test{
         vm.prank(alice);
         testToken.transferFrom(bob, alice, transferAmount);
 
-        testToken.transfer(alice,transferAmount);
+        assertEq(testToken.balanceOf(alice), transferAmount);
+        assertEq(testToken.balanceOf(bob), STARTING_BALANCE - transferAmount);
+
     }
 
     
